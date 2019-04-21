@@ -91,7 +91,7 @@
 
                 });
 
-    // Info Location
+    // DISPLAYS LOCATION
 
     getDriverLocation();
 
@@ -102,6 +102,8 @@
     var geoLocation = { lat: geoLat, lng: geoLng };
     var infoWindow = new google.maps.InfoWindow;
 
+
+
     map.setZoom(18);
     map.setCenter(geoLocation);
 
@@ -109,6 +111,28 @@
     infoWindow.open(map);
     infoWindow.setPosition(geoLocation);
     setTimeout(function () { infoWindow.close(); }, 3000);
+
+
+    var lineSymbol = {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 4,
+            fillColor: '#757575',
+            fillOpacity: 1.0,
+            strokeColor: '#757575',
+            strokeOpacity: 0.3,
+            strokeWeight: 6
+            };
+
+            var line = new google.maps.Polyline({
+            path: [{lat: geoLat, lng: geoLng}, {lat: geoLat, lng: geoLng}],
+            icons: [{
+                icon: lineSymbol,
+                offset: '100%'
+            }],
+            map: map
+            });
+
+
     }
 
 
@@ -123,7 +147,7 @@
 
     function getDriverLocation(){
 
-        var driverOptions = {enableHighAccuracy: true};
+        var driverOptions = {enableHighAccuracy: true, maximumAge: Infinity};
         var geoLocation = navigator.geolocation;
         var watchID = geoLocation.getCurrentPosition(updateDriverLocation, errorDriverHandler, driverOptions);
     }
@@ -143,57 +167,6 @@
         window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 
         axios.post('/driver/home',{lat: geoLat, lng: geoLng });
-
-                                        deleteLines();
-                                        var lineSymbol = {
-                                            path: google.maps.SymbolPath.CIRCLE,
-                                                scale: 6,
-                                                    fillColor: '#E65100',
-                                                        fillOpacity: 1.0,
-                                                    strokeColor: '#E65100',
-                                                strokeOpacity: 0.3,
-                                            strokeWeight: 9
-                                        };
-
-                                        var line = new google.maps.Polyline({
-                                            path: [{lat: geoLat, lng: geoLng}, {lat: geoLat, lng: geoLng}],
-                                                icons: [{
-                                                    icon: lineSymbol,
-                                                offset: '100%'
-                                                }],
-                                            map: map
-                                        });
-
-                                        lines.push(line);
-
-                                        animateCircle(line);
-
-                                        function animateCircle(line) {
-                                                var count = 0;
-                                                    window.setInterval(function() {
-                                                        count = (count + 1) % 200;
-
-                                                        var icons = line.get('icons');
-                                                    icons[0].offset = (count / 2) + '%';
-                                                line.set('icons', icons);
-                                            }, 20);
-                                        }
-
-
-                                        function setMapOnAll(map) {
-                                        for (var i = 0; i < lines.length; i++) {
-                                        lines[i].setMap(map);
-                                        }
-                                        }
-
-                                        function clearLines() {
-                                        setMapOnAll(null);
-                                        }
-
-                                        function deleteLines() {
-                                        clearLines();
-                                        lines = [];
-                                        }
 
     }
 
