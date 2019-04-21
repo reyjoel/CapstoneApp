@@ -91,7 +91,7 @@
 
                 });
 
-    // DISPLAYS LOCATION
+    // Info Location
 
     getDriverLocation();
 
@@ -102,8 +102,6 @@
     var geoLocation = { lat: geoLat, lng: geoLng };
     var infoWindow = new google.maps.InfoWindow;
 
-
-
     map.setZoom(18);
     map.setCenter(geoLocation);
 
@@ -111,28 +109,6 @@
     infoWindow.open(map);
     infoWindow.setPosition(geoLocation);
     setTimeout(function () { infoWindow.close(); }, 3000);
-
-
-    var lineSymbol = {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 4,
-            fillColor: '#757575',
-            fillOpacity: 1.0,
-            strokeColor: '#757575',
-            strokeOpacity: 0.3,
-            strokeWeight: 6
-            };
-
-            var line = new google.maps.Polyline({
-            path: [{lat: geoLat, lng: geoLng}, {lat: geoLat, lng: geoLng}],
-            icons: [{
-                icon: lineSymbol,
-                offset: '100%'
-            }],
-            map: map
-            });
-
-
     }
 
 
@@ -147,7 +123,7 @@
 
     function getDriverLocation(){
 
-        var driverOptions = {enableHighAccuracy: true, maximumAge: Infinity};
+        var driverOptions = {enableHighAccuracy: true};
         var geoLocation = navigator.geolocation;
         var watchID = geoLocation.getCurrentPosition(updateDriverLocation, errorDriverHandler, driverOptions);
     }
@@ -168,6 +144,57 @@
 
         axios.post('/driver/home',{lat: geoLat, lng: geoLng });
 
+                                        deleteLines();
+                                        var lineSymbol = {
+                                            path: google.maps.SymbolPath.CIRCLE,
+                                                scale: 6,
+                                                    fillColor: '#E65100',
+                                                        fillOpacity: 1.0,
+                                                    strokeColor: '#E65100',
+                                                strokeOpacity: 0.3,
+                                            strokeWeight: 9
+                                        };
+
+                                        var line = new google.maps.Polyline({
+                                            path: [{lat: geoLat, lng: geoLng}, {lat: geoLat, lng: geoLng}],
+                                                icons: [{
+                                                    icon: lineSymbol,
+                                                offset: '100%'
+                                                }],
+                                            map: map
+                                        });
+
+                                        lines.push(line);
+
+                                        animateCircle(line);
+
+                                        function animateCircle(line) {
+                                                var count = 0;
+                                                    window.setInterval(function() {
+                                                        count = (count + 1) % 200;
+
+                                                        var icons = line.get('icons');
+                                                    icons[0].offset = (count / 2) + '%';
+                                                line.set('icons', icons);
+                                            }, 20);
+                                        }
+
+
+                                        function setMapOnAll(map) {
+                                        for (var i = 0; i < lines.length; i++) {
+                                        lines[i].setMap(map);
+                                        }
+                                        }
+
+                                        function clearLines() {
+                                        setMapOnAll(null);
+                                        }
+
+                                        function deleteLines() {
+                                        clearLines();
+                                        lines = [];
+                                        }
+
     }
 
     function getUpdateLocation(){
@@ -176,55 +203,6 @@
             var watchID = geoLocation.watchPosition(updateLocation, errorDriverHandler, options);
     }
 
-        // END WATCH LOCATION
-
-
-
-
-    // //Geolocation Controller
-    // function GeolocationControl(controlDiv, map) {
-
-    // // Set CSS for the control button
-    // var controlUI = document.createElement('div');
-    //     controlUI.style.backgroundColor = '#E65100';
-    //     controlUI.style.border = '7px solid #E65100';
-    //     controlUI.style.borderRadius = '20px';
-    //     controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-    //     controlUI.style.cursor = 'pointer';
-    //     controlUI.style.marginBottom = '50px';
-    //     controlUI.style.textAlign = 'center';
-    //     controlDiv.appendChild(controlUI);
-
-    // // Set CSS for the control text
-    // var controlText = document.createElement('div');
-    //     controlText.style.WebkitUserSelect = "none";
-    //     controlText.style.MozUserSelect = "none";
-    //     controlText.style.msUserSelect = "none";
-    //     controlText.style.userSelect = "none";
-    //     controlText.style.color = '#ECEFF1';
-    //     controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
-    //     controlText.style.fontSize = '16px';
-    //     controlText.style.lineHeight = '38px';
-    //     controlText.style.paddingLeft = '5px';
-    //     controlText.style.paddingRight = '5px';
-    //     controlText.innerHTML = 'Start';
-    //     controlUI.appendChild(controlText);
-
-
-    // // Setup the click event listeners to geolocate user
-    // google.maps.event.addDomListener(controlUI, 'click', startLocation);
-
-    // }
-
-    // var geolocationDiv = document.createElement('div');
-    // var geolocationControl = new GeolocationControl(geolocationDiv, map);
-    // map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(geolocationDiv);
-
-
-
-    // function startLocation(){
-
-    // }
 
     }
     </script>

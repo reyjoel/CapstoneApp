@@ -92,7 +92,7 @@ map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
 
 
-            // DISPLAY CURRENT LOCATION
+            // INFO LOCATION
 
             getLocation();
 
@@ -110,25 +110,6 @@ map = new google.maps.Map(document.getElementById('map'), mapOptions);
             infoWindow.setPosition(geoLocation);
             setTimeout(function () { infoWindow.close(); }, 5000);
 
-
-            var lineSymbol = {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 4,
-                fillColor: '#757575',
-                fillOpacity: 1.0,
-                strokeColor: '#757575',
-                strokeOpacity: 0.3,
-                strokeWeight: 6
-                };
-
-                var line = new google.maps.Polyline({
-                path: [{lat: geoLat, lng: geoLng}, {lat: geoLat, lng: geoLng}],
-                icons: [{
-                    icon: lineSymbol,
-                    offset: '100%'
-                }],
-                map: map
-                });
             }
 
 
@@ -148,31 +129,78 @@ map = new google.maps.Map(document.getElementById('map'), mapOptions);
             }
 
 
-
-        // END DISPLAY CURRENT LOCATION
-
-
         // WATCH LOCATION
 
-getUpdateLocation();
+            getUpdateLocation();
 
-function updateLocation(position) {
+            function updateLocation(position) {
 
-    var geoLat = position.coords.latitude;
-    var geoLng = position.coords.longitude;
+                var geoLat = position.coords.latitude;
+                var geoLng = position.coords.longitude;
 
-    var token = document.head.querySelector('meta[name="csrf-token"]');
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+                var token = document.head.querySelector('meta[name="csrf-token"]');
+                window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 
-    axios.post('/student/home',{lat: geoLat, lng: geoLng });
+                axios.post('/student/home',{lat: geoLat, lng: geoLng });
 
-}
+                                        deleteLines();
+                                        var lineSymbol = {
+                                            path: google.maps.SymbolPath.CIRCLE,
+                                                scale: 6,
+                                                    fillColor: '#263238',
+                                                        fillOpacity: 1.0,
+                                                    strokeColor: '#263238',
+                                                strokeOpacity: 0.3,
+                                            strokeWeight: 9
+                                        };
 
-function getUpdateLocation(){
-        var options = {enableHighAccuracy: true};
-        var geoLocation = navigator.geolocation;
-        var watchID = geoLocation.watchPosition(updateLocation, errorHandler, options);
-}
+                                        var line = new google.maps.Polyline({
+                                            path: [{lat: geoLat, lng: geoLng}, {lat: geoLat, lng: geoLng}],
+                                                icons: [{
+                                                    icon: lineSymbol,
+                                                offset: '100%'
+                                                }],
+                                            map: map
+                                        });
+
+                                        lines.push(line);
+
+                                        animateCircle(line);
+
+                                        function animateCircle(line) {
+                                                var count = 0;
+                                                    window.setInterval(function() {
+                                                        count = (count + 1) % 200;
+
+                                                        var icons = line.get('icons');
+                                                    icons[0].offset = (count / 2) + '%';
+                                                line.set('icons', icons);
+                                            }, 20);
+                                        }
+
+
+                                        function setMapOnAll(map) {
+                                        for (var i = 0; i < lines.length; i++) {
+                                        lines[i].setMap(map);
+                                        }
+                                        }
+
+                                        function clearLines() {
+                                        setMapOnAll(null);
+                                        }
+
+                                        function deleteLines() {
+                                        clearLines();
+                                        lines = [];
+                                        }
+
+            }
+
+            function getUpdateLocation(){
+                    var options = {enableHighAccuracy: true};
+                    var geoLocation = navigator.geolocation;
+                    var watchID = geoLocation.watchPosition(updateLocation, errorHandler, options);
+            }
 
         // END WATCH LOCATION
 
