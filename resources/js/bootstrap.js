@@ -52,5 +52,6 @@ window.Echo = new Echo({
     broadcaster: 'pusher',
     key: '72bd253e6b5417515dc1',
     cluster: 'ap1',
-    encrypted: true
+    encrypted: true,
+    enabledTransports: ['ws', 'wss']
 });

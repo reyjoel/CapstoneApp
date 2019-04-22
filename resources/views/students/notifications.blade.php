@@ -1,5 +1,5 @@
 @extends('layouts.appvue')
 
 @section('content')
-<notification-stu></notification-stu>
+    <notification-stu :student="{{ auth()->user() }}"></notification-stu>
 @endsection

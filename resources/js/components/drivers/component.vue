@@ -35,7 +35,7 @@
       </v-list>
       <!-- Emergency Icon -->
       <v-list class="pa-0" dense>
-        <v-list-tile class="pt-1" href="/driver/emergency">
+        <v-list-tile class="pt-1" @click="sendNotifyAll()">
           <v-list-tile-action>
             <v-icon>add_alert</v-icon>
           </v-list-tile-action>
@@ -89,6 +89,15 @@ export default {
     };
   },
   methods: {
+
+    sendNotifyAll() {
+      axios.post('/driver/notifyAll', { notification: true })
+      .then(response => {
+        alert(response.data.status);
+        setTimeout(this.scrollToEnd, 100);
+      });
+    },
+    
     logout() {
       axios
         .get('logout')

@@ -178,6 +178,11 @@ class StudentController extends Controller
         return response(['driver' => $driver, 'student' => $student]);
     }
 
+    // Notifications
+    public function studentNotifications(){
+        return view('students.notifications');
+    }
+
     public function logout()
     {
         auth()->logout();

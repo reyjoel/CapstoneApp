@@ -142,6 +142,10 @@ class GuardianController extends Controller
         return response()->json(array('student' => $student, 'driver' => $driver));
      }
 
+     // Notifications
+    public function guardianNotifications(){
+        return view('guardians.notification');
+    }
 
 
     public function logout()
