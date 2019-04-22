@@ -12,7 +12,7 @@
           <v-list-tile avatar href="/guardian/profile">
     <!-- Profile Image -->
             <v-avatar color="blue-grey darken-4">
-              <v-icon dark>account_circle</v-icon>
+              <v-icon dark>account_circle</v-icon>ø
             </v-avatar>
     <!-- Profile Name -->
             <v-list-tile-content class="pl-3">
@@ -35,7 +35,7 @@
       </v-list>
       <!-- Emergency Icon -->
       <v-list class="pa-0" dense>
-        <v-list-tile class="pt-1" href="/guardian/emergency">
+        <v-list-tile class="pt-1" @click="sendNotifyDriver()">
           <v-list-tile-action>
             <v-icon>add_alert</v-icon>
           </v-list-tile-action>
@@ -77,6 +77,15 @@ export default {
     };
   },
   methods: {
+    
+    sendNotifyDriver() {
+      axios.post('/guardian/notifyDriver', { notification: true })
+      .then(response => {
+        alert(response.data.status);
+        setTimeout(this.scrollToEnd, 100);
+      });
+    },
+
     logout() {
       axios
         .get('logout')

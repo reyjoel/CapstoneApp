@@ -134,6 +134,11 @@ class DriverController extends Controller
 
     }
 
+    // Notifications
+    public function driverNotifications(){
+        return view('drivers.notification');
+    }
+
     public function logout()
     {
         auth()->logout();

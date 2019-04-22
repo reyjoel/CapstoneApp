@@ -78,6 +78,10 @@ Route::group(['prefix' => 'student', 'middleware' => ['auth:web_student']], func
     Route::get('/driver', 'StudentController@linkDriver');
     Route::get('/driver/driverinfo', 'StudentController@showDriverInfo');
     Route::get('/logout', 'StudentController@logout');
+
+    //for notifications
+    Route::get('/notification', 'StudentController@studentNotifications');
+    Route::get('/studentNotifications', 'NotificationController@studentNotifications');
 });
 
 // Driver
@@ -96,6 +100,11 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:web_driver']], functi
     Route::post('/student/message', 'MessageController@sendDriverMessages');
     Route::get('/student/message/recieve', 'MessageController@fetchDriverMessages');
     Route::get('/logout', 'DriverController@logout');
+
+    //for notifications
+    Route::get('/notification', 'DriverController@driverNotifications');
+    Route::get('/driverNotifications', 'NotificationController@driverNotifications');
+    Route::post('/notifyAll', 'NotificationController@notifyAll');
 });
 
 // Guardian
@@ -112,4 +121,9 @@ Route::group(['prefix' => 'guardian', 'middleware' => ['auth:web_guardian']], fu
     Route::put('/updateemail', 'GuardianController@updateEmail');
     Route::put('/updatepassword', 'GuardianController@updatePassword');
     Route::get('/logout', 'GuardianController@logout');
+
+    //for notifications
+    Route::get('/notification', 'GuardianController@guardianNotifications');
+    Route::get('/guardianNotifications', 'NotificationController@guardianNotifications');
+    Route::post('/notifyDriver', 'NotificationController@notifyDriver');
 });
