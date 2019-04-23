@@ -147,6 +147,10 @@ class GuardianController extends Controller
         return view('guardians.notification');
     }
 
+    // Emergency
+    public function guardianEmergency(){
+        return view('guardians.emergency');
+    }
 
     public function logout()
     {

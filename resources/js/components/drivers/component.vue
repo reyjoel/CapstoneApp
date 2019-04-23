@@ -23,19 +23,24 @@
       </v-toolbar>
     <!-- Notification Icon -->
       <v-list class="pa-0" dense>
-        <v-list-tile class="pt-1" href="/driver/notification">
+        <v-list-tile class="pt-1" href="/driver/notification" @click="clearBadge()">
           <v-list-tile-action>
-            <v-icon>notifications_none</v-icon>
+            <v-badge color="red">
+              <template v-slot:badge v-if="notification">
+                <span>!</span>
+              </template>
+              <v-icon>notifications_none</v-icon>
+            </v-badge>
           </v-list-tile-action>
     <!-- Notification Title -->
           <v-list-tile-content>
-            <v-list-tile-title class="title font-weight-thin">Notifications</v-list-tile-title>
+              <v-list-tile-title class="title font-weight-thin">Notifications</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
       <!-- Emergency Icon -->
       <v-list class="pa-0" dense>
-        <v-list-tile class="pt-1" @click="sendNotifyAll()">
+        <v-list-tile class="pt-1" href="/driver/emergency">
           <v-list-tile-action>
             <v-icon>add_alert</v-icon>
           </v-list-tile-action>
@@ -85,19 +90,30 @@ export default {
     },
   data() {
     return {
-      drawer: false
+      drawer: false,
+      notification: false
     };
   },
-  methods: {
+  created(){
+    this.notification;
 
-    sendNotifyAll() {
-      axios.post('/driver/notifyAll', { notification: true })
-      .then(response => {
-        alert(response.data.status);
-        setTimeout(this.scrollToEnd, 100);
-      });
+    Echo.channel("notification-sent."+this.driver.bus_id).listen( "Notifications",
+      e => {
+        if(e){
+          var url = window.location.origin + '/media/ding.mp3';
+          var audio = new Audio(url);
+          setTimeout(function() {
+            audio.play();
+          }, 0);
+          this.notification = true;
+        }
+      }
+    );
+  },
+  methods: {
+    clearBadge(){
+      this.notification = false;
     },
-    
     logout() {
       axios
         .get('logout')

@@ -23,9 +23,14 @@
       </v-toolbar>
     <!-- Notification Icon -->
       <v-list class="pa-0" dense>
-        <v-list-tile class="pt-1" href="/guardian/notification">
+        <v-list-tile class="pt-1" href="/guardian/notification" @click="clearBadge()">
           <v-list-tile-action>
-            <v-icon>notifications_none</v-icon>
+            <v-badge color="red">
+              <template v-slot:badge  v-if="notification">
+                <span>!</span>
+              </template>
+              <v-icon>notifications_none</v-icon>
+            </v-badge>
           </v-list-tile-action>
     <!-- Notification Title -->
           <v-list-tile-content>
@@ -35,7 +40,7 @@
       </v-list>
       <!-- Emergency Icon -->
       <v-list class="pa-0" dense>
-        <v-list-tile class="pt-1" @click="sendNotifyDriver()">
+        <v-list-tile class="pt-1" href="/guardian/emergency">
           <v-list-tile-action>
             <v-icon>add_alert</v-icon>
           </v-list-tile-action>
@@ -65,25 +70,37 @@
 
 <script>
 export default {
-    props: {
-        guardian: {
-            type: Object,
-            required: true
-        }
-    },
+  props: {
+      guardian: {
+          type: Object,
+          required: true
+      }
+  },
   data() {
     return {
-      drawer: false
+      drawer: false,
+      notification: false
     };
   },
+  created(){
+    this.notification;
+
+    Echo.channel("notification-sent."+this.guardian.id).listen( "Notifications",
+      e => {
+        if(e){
+          var url = window.location.origin + '/media/ding.mp3';
+          var audio = new Audio(url);
+          setTimeout(function() {
+            audio.play();
+          }, 0);
+          this.notification = true;
+        }
+      }
+    );
+  },
   methods: {
-    
-    sendNotifyDriver() {
-      axios.post('/guardian/notifyDriver', { notification: true })
-      .then(response => {
-        alert(response.data.status);
-        setTimeout(this.scrollToEnd, 100);
-      });
+    clearBadge(){
+      this.notification = false;
     },
 
     logout() {

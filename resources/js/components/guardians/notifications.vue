@@ -59,21 +59,29 @@ export default {
 
     Echo.channel("notification-sent."+this.guardian.id).listen( "Notifications",
       e => {
-        var obj = {
-          id            : e.notifications.id,
-          notifier      : e.notifications.notifier,
-          notifier_id   : e.notifications.notifier_id,
-          notify_to_id  : e.notifications.notify_to_id,
-          notify_to     : e.notifications.notify_to,
-          g_fname       : e.notifications.g_fname,
-          g_lname       : e.notifications.g_lname,
-          stu_fname     : e.notifications.stu_fname,
-          stu_lname     : e.notifications.stu_lname,
-          created_at    : e.notifications.created_at,
-          updated_at    : e.notifications.updated_at,
+
+        if(e){
+          var url = window.location.origin + '/media/ding.mp3';
+          var audio = new Audio(url);
+          var obj = {
+            id            : e.notifications.id,
+            notifier      : e.notifications.notifier,
+            notifier_id   : e.notifications.notifier_id,
+            notify_to_id  : e.notifications.notify_to_id,
+            notify_to     : e.notifications.notify_to,
+            g_fname       : e.notifications.g_fname,
+            g_lname       : e.notifications.g_lname,
+            stu_fname     : e.notifications.stu_fname,
+            stu_lname     : e.notifications.stu_lname,
+            created_at    : e.notifications.created_at,
+            updated_at    : e.notifications.updated_at,
+          }
+          setTimeout(function() {
+            audio.play();
+          }, 0);
+          this.allNotifications.push(obj);
+          setTimeout(this.scrollToEnd, 100);
         }
-        this.allNotifications.push(obj);
-        setTimeout(this.scrollToEnd, 100);
       }
     );
 

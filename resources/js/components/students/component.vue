@@ -27,7 +27,12 @@
       <v-list class="pa-0" dense>
         <v-list-tile class="pt-1" href="/student/notification">
           <v-list-tile-action>
-            <v-icon>notifications_none</v-icon>
+            <v-badge color="red">
+              <template v-slot:badge v-if="notification">
+                <span>!</span>
+              </template>
+              <v-icon>notifications_none</v-icon>
+            </v-badge>
           </v-list-tile-action>
     <!-- Notification Title -->
           <v-list-tile-content>
@@ -70,13 +75,29 @@ export default {
   data() {
     return {
       drawer: false,
-      students: []
+      students: [],
+      notification: false
     }
   },
   created() {
-       axios
-        .get('/student/home/studentinfo')
-        .then(response => this.students = response.data.students);
+    axios
+    .get('/student/home/studentinfo')
+    .then(response => this.students = response.data.students);
+
+    this.notification;
+
+    Echo.channel("notification-sent."+this.driver.bus_id).listen( "Notifications",
+      e => {
+        if(e){
+          var url = window.location.origin + '/media/ding.mp3';
+          var audio = new Audio(url);
+          setTimeout(function() {
+            audio.play();
+          }, 0);
+          this.notification = true;
+        }
+      }
+    );
   },
   methods: {
     logout() {

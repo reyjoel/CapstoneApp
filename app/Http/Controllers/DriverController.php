@@ -139,6 +139,11 @@ class DriverController extends Controller
         return view('drivers.notification');
     }
 
+    // Emergency
+    public function driverEmergency(){
+        return view('drivers.emergency');
+    }
+
     public function logout()
     {
         auth()->logout();
