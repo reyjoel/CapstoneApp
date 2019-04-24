@@ -105,6 +105,9 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:web_driver']], functi
     Route::get('/notification', 'DriverController@driverNotifications');
     Route::get('/driverNotifications', 'NotificationController@driverNotifications');
     Route::post('/notifyAll', 'NotificationController@notifyAll');
+
+    //for emergency
+    Route::get('/emergency', 'DriverController@driverEmergency');
 });
 
 // Guardian
@@ -126,4 +129,7 @@ Route::group(['prefix' => 'guardian', 'middleware' => ['auth:web_guardian']], fu
     Route::get('/notification', 'GuardianController@guardianNotifications');
     Route::get('/guardianNotifications', 'NotificationController@guardianNotifications');
     Route::post('/notifyDriver', 'NotificationController@notifyDriver');
+
+    //for emergency
+    Route::get('/emergency', 'GuardianController@guardianEmergency');
 });

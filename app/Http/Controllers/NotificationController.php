@@ -51,9 +51,7 @@ class NotificationController extends Controller
     }
 
     public function notifyDriver(Request $request){
-        $this->middleware('auth:web_guardian');
-
-        $id = Auth::guard('web_guardian')->id();
+        $id = $request->input("id");
         $notifier_id = Guardian::find($id)->student_id;
         $notify_to_id = Student::find($notifier_id)->bus_id;
 
@@ -62,28 +60,26 @@ class NotificationController extends Controller
             'notifier' => 'guardian',
             'notify_to' => 'bus',
             'notify_to_id' => $notify_to_id
-            ]);
+        ]);
 
         broadcast(new Notifications($message))->toOthers();
 
-        return response(['status'=>'Message sent successfully','message'=>$message]);
+        return response(['status'=>'Emergency sent successfully to driver.']);
     }
 
     public function notifyAll(Request $request){
-        $this->middleware('auth:web_driver');
-
-        $id = Auth::guard('web_driver')->id();
-        $bus_id = Driver::find($id)->bus_id;
+        $id = $request->input("id");
+        $bus_id = $request->input("bus_id");
 
         $message = Notification::create([
             'notifier_id' => $id,
             'notifier' => 'driver',
             'notify_to' => 'bus',
             'notify_to_id' => $bus_id
-            ]);
+        ]);
 
         broadcast(new Notifications($message))->toOthers();
 
-        return response(['status'=>'Message sent successfully','message'=>$message]);
+        return response(['status'=>'Emergency sent successfully to guardians and students.']);
     }
 }
